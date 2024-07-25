@@ -1,0 +1,8 @@
+#include <iostream> //case sensitive
+using namespace std;
+
+int main ()
+{
+    cout<<"Hello World!"; //cout is to print, "" is a must
+    return 0;
+}
