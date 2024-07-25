@@ -1,0 +1,50 @@
+--Georgia Sugisandhea_535230080
+--Natural Join
+SELECT first_name, last_name, job_id, job_title
+FROM employees NATURAL JOIN jobs
+WHERE department_id > 80;
+
+--Cross Join = cartesius
+SELECT last_name, department_name
+FROM employees CROSS JOIN departments;
+
+--USING CLAUSE
+SELECT first_name, last_name, department_id, department_name
+FROM employees JOIN departments USING (department_id);
+
+--ON CLAUSE = to join columns using attribute w diff name
+SELECT first_name, last_name, e.department_id, d.department_name
+FROM employees e JOIN departments d ON(e.department_id = d.department_id);
+
+SELECT last_name, job_title = can use on with between operator
+FROM employees e JOIN jobs j --employees e means employees as e
+ON (e.job_id = j.job_id);
+
+SELECT last_name, salary, grade_level, lowest_sal, highest_sal
+From employees JOIN job_grades
+ON(salary BETWEEN lowest_sal AND highest_sal);
+
+--Join 3 tables
+SELECT last_name, department_name AS "Department", city
+FROM departments JOIN employees USING (department_id)
+JOIN locations USING (location_id);
+
+--left outer join
+SELECT e.last_name, d.department_id, d.department_name
+FROM employees e LEFT OUTER JOIN departments d
+ON (e.department_id = d.department_id);
+
+--RIGHT OUTER JOIN
+SELECT e.last_name, d.department_id, d.department_name
+FROM employees e RIGHT OUTER JOIN departments d
+ON(e.department_id=d.department_id);
+
+--FULL OUTER JOIN
+SELECT e.last_name, d.department_id, d.department_name
+FROM employees e FULL OUTER JOIN departments d
+ON (e.department_id = d.department_id);
+
+--self join
+SELECT worker.last_name, worker.manager_id, manager.last_name AS "Manager name"
+FROM employees worker JOIN employees manager
+ON (worker.manager_id = manager.employee_id);

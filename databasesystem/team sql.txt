@@ -1,0 +1,321 @@
+-- Lusy Karlina Coa
+-- 535230164
+
+-- Lanjutan Section 9
+
+-- UNION ALL adalah mengembalikan baris dari 2 tabel, data duplikat tidak dihilangkan
+-- hasil dari query pertama adalah menampilkan kolom location_id dari tabel locations
+-- hasil dari query kedua adalah menampilkan kolom location_id dari tabel departments
+-- kedua hasil query di UNION ALL/digabungkan menjadi 1 kolom dengan data duplikat tidak dihilangkan
+-- hasil data tersebut ditampilkan secara ascending default(dari data terkecil sampai data terbesar)
+-- atau bahasa SQL : ORDER BY location_id
+SELECT location_id FROM locations 
+UNION ALL 
+SELECT location_id FROM departments
+ORDER BY location_id; 
+
+-- INTERSECT adalah menampilkan data yang sama dari 2 tabel, data duplikat akan ditampilkan 1 saja
+-- hasil dari query pertama adalah menampilkan kolom location_id dari tabel locations
+-- hasil dari query kedua adalah menampilkan kolom location_id dari tabel departments 
+-- lalu kedua kolom digabungkan dan menampilkan hasil data yang hanya ada dari kedua tabel (INTERSECT). jika tidak ada di salah satu tabel maka tidak ditampilkan
+SELECT location_id FROM locations 
+INTERSECT
+SELECT location_id FROM departments; 
+
+-- DISTINCT adalah menampilkan data dari 1 tabel, data diplikat akan ditampilkan sekali saja
+-- hasil dari quey pertama adalah menampilkan kolom employee_id dari tabel job_history dengan menghilangkan data yang duplikat
+-- hasil dari  query kedua adalah menampilkan kolom employee_id dari tabel employees dengan menghilangkan data yang duplikat
+-- lalu kedua hasil kolom tersebut menggunakan MINUS / R-S yang hanya menampilkan data yang ada di tabel pertama dan tidak ada di tebel kedua maupun gabunggan kedua tabel
+-- MINUS adalah menampilkan hasil query pertama yang datanya tidak ada di query kedua maupun gabungan dari kedua query tersebut
+SELECT DISTINCT employee_id
+FROM job_history
+MINUS
+SELECT DISTINCT employee_id
+FROM employees;
+
+-- Section 10 : Subqueries
+-- DP 10-1 : Fundamentals of Subqueries
+
+-- Query berikut terdiri dari outer query dan inner query, hasil dari inner querynya adalah menampilkan kolom hire_date dari tabel employees dengan syarat last_name = 'Vargas'
+-- inner query berfungsi sebagai where di outer query, jadi hasil dari outer querynya adalah menampilkan kolom first_name, last_name, hire_date dari tabel employees dengan syarat hire_date > hasil inner query
+SELECT first_name, last_name, hire_date
+FROM employees
+WHERE hire_date > (SELECT hire_date
+FROM employees
+WHERE last_name = 'Vargas');
+
+-- Query berikut terdiri dari outer query dan inner query, hasil dari inner query adalah menampilkan kolom department_id dari tabel employees dengan syarat last_name = 'Grant'
+--inner query berfungsi sebagai where di outer query, jadi hasil dari outer query adalah menampilkan kolom last_name dari tabel employees dengan syarat department_if = hasil inner query
+SELECT last_name
+FROM employees
+WHERE department_id = (SELECT department_id
+FROM employees
+WHERE last_name = 'Grant');
+
+
+--eryca dhamma shantyz
+-- DP 10-2 : Single-Row Subqueries
+
+--query terdiri dari outer query dan inner query, hasil dari inner query menampilkan departement_id dari tabel departement dimana departement_name = 'Marketing'
+--WHERE berfungsi untuk outer query hasil outernya akan menampilkan last_name,job_id,department_id dimana isi department_id  berdasarkan inner querynya 'Markerting' hasilnya 20
+
+SELECT last_name, job_id, department_id
+FROM employees
+WHERE department_id = (SELECT department_id
+FROM departments
+WHERE department_name = 'Marketing')
+ORDER BY job_id;
+ 
+ -- query berikut dari outer query dan 2 inner query 
+ -- hasil dari inner query pertama menampilkan job_id pada tabel employees yang dimana employee_id = 141
+ -- yang berfungsi sebagai WHERE untuk outer query jadi hasilnya akan menampilkan last_name, job_id, salary, department_id
+ --dimana isi ke 1 subquery pake job_id berdasarkan inner query pertama dimana employee_id = 141 hasilnya ST_CLERK
+ 
+ --hasil dari inner query ke 2 menampilkan department_id pada tabel department dimana location_id = 1500
+ --yang berfungsi sebagai WHERE untuk outer quarter  menampilkan hasil yang sama seperti yang pertama
+ --dimana isi ke 2 subquery pake department_id berdasarkan inner query ke 2 dimana location_id = 1500 hasilnya 50
+
+SELECT last_name, job_id, salary, department_id
+FROM employees
+WHERE job_id = (SELECT job_id
+FROM employees
+WHERE employee_id = 141)
+AND department_id = (SELECT department_id
+FROM departments
+WHERE location_id = 1500);
+ 
+ -- the subquery first finds the AVERAGE salary
+ -- query ini terdiri dari outer query dan inner query, hasil dari inner query dan outer query tidak bisa digabung  perhitungan akan dilakukan satu persatu
+ -- inner query menampilkan kolom salary dari tabel employees 
+ --hasil WHERE di outer query menampilkan last_name,salary pada tabel employees bersyarat salary lebih kecil (<) avg salary
+ --hasil inner query AVG(SALARY) adalah 8775
+ 
+-- Group Functions in Subqueries
+SELECT last_name, salary
+FROM employees
+WHERE salary < 
+(SELECT AVG(salary)
+FROM employees);
+ 
+ -- query ini menghasilkan outer query dan inner query
+ --hasil dari inner query akan menampilkan department_id dari tabel employees yang dimana departemnt_id = 50; 
+ -- WHERE untuk outer query, jadi hasil outer querynya akan menampilkan department_id, min(salary) dimana salary lebih besar(>) dari hasil inner query 
+--hasilnya subquery adalah min(salary) = 2500
+
+SELECT department_id, MIN(salary)
+FROM employees
+GROUP BY department_id
+HAVING MIN(salary) > (SELECT MIN(salary)
+FROM employees
+WHERE department_id = 50);
+ 
+ -- DP 10-3 : Multiple-Row Subqueries
+ -- query ini mengahasilkan outer query dan inner query
+ --hasil dari inner query  menampilkan hire_date dari tabel employees yang dimana department_id = 90
+ --where berfungsi outer query, jadi hasil outer querynya akan menampilkan last_name,hire_date
+ -- isi hire_date nya di extract dari year from dimana department_id = 90 yaitu menghasilkan hire_date -> dd,mm,yy
+
+SELECT last_name, hire_date
+FROM employees
+WHERE EXTRACT(YEAR FROM hire_date) IN (SELECT EXTRACT(YEAR FROM hire_date)
+FROM employees
+WHERE department_id=90); 
+
+--Brenda Abigail
+--535230194
+
+--terdapat 2 query yang digunakan yaitu Outer Query, dan Inner Query
+--hasil dari inner querynya mengambil tahun perekrutan (dari kolom hire_date) 
+dari karyawan yang bekerja di departemen dengan ID 90.
+-- yang berfungsi sebagai WHERE di outer query, sehingga hasilnya akan 
+membandingkan tahun perekrutan (tahun kdari kolom hire_date) dengan nilai-nilai 
+yang ditemukan dalam subquery yang akan datang. 
+
+SELECT last_name, hire_date
+FROM employees
+WHERE EXTRACT(YEAR FROM hire_date) < ANY
+(SELECT EXTRACT(YEAR FROM hire_date)
+FROM employees
+WHERE department_id=90);
+
+
+--terdapat 2 query yang digunakan yaitu Outer Query, dan Inner Query
+--hasil dari inner querynya mengambil tahun perekrutan (dari kolom hire_date) 
+dari karyawan yang bekerja di departemen dengan ID 90. Subquery ini menghasilkan 
+daftar tahun-tahun tersebut untuk perbandingan dengan tahun perekrutan dalam pernyataan utama.
+-- yang berfungsi sebagai WHERE di outer query, sehingga hasilnya akan 
+membandingkan tahun perekrutan (tahun kdari kolom hire_date) dengan nilai-nilai 
+yang ditemukan dalam subquery yang akan datang.  perbandingan menggunakan operator < ALL, 
+yang akan mengembalikan baris-baris di mana tahun perekrutan karyawan 
+kurang dari semua tahun yang ditemukan dalam subquery.
+
+SELECT last_name, hire_date FROM employees
+WHERE EXTRACT(YEAR FROM hire_date) < ALL
+(SELECT EXTRACT(YEAR FROM hire_date)
+FROM employees
+WHERE department_id=90);
+
+
+--terdapat 2 query yang digunakan yaitu Outer Query, dan Inner Query
+--hasil dari inner querynya adalah mengambil manager_id (ID manajer) dari karyawan 
+dalam tabel employees. Subquery ini menghasilkan daftar ID manajer
+-- yang berfungsi sebagai WHERE di outer query, sehingga hasilnya akan memeriksa 
+apakah employee_id ada dalam daftar nilai yang ditemukan dalam subquery yang akan datang.
+--  Pernyataan utama menggunakan operator IN untuk memeriksa apakah employee_id 
+ada dalam daftar ID manajer dan akan mengembalikan baris di mana karyawan 
+memiliki ID yang sesuai dengan ID manajer dalam tabel yang sama.
+
+SELECT last_name,
+employee_id
+FROM employees
+WHERE employee_id IN
+(SELECT manager_id
+FROM employees);
+
+
+--terdapat 2 query yang digunakan yaitu Outer Query, dan Inner Query
+--hasil dari inner querynya adalah mengambil manager_id (ID manajer) dari karyawan 
+dalam tabel employees dan menghasilkan daftar ID manajer
+-- yang berfungsi sebagai WHERE di outer query, sehingga hasilnya akan memeriksa apakah employee_id kurang 
+dari atau sama dengan semua nilai yang ditemukan dalam subquery yang akan datang.
+--kode tersebut akan mengembalikan baris di mana employee_id kurang dari atau sama 
+dengan semua ID manajer dalam tabel yang sama.
+
+SELECT last_name, employee_id
+FROM employees
+WHERE employee_id <= ALL
+(SELECT manager_id
+FROM employees);
+
+
+--terdapat 2 query yang digunakan yaitu Outer Query, dan Inner Query
+--hasil dari inner querynya adalah  mengambil gaji karyawan yang bekerja di departemen dengan ID 10 atau 20. 
+Subquery ini menghasilkan daftar gaji dari karyawan dalam departemen tersebut.
+-- yang berfungsi sebagai HAVING MIN di outer query, sehingga hasilnya akan  memeriksa apakah gaji 
+terendah dalam departemen kurang dari salah satu gaji yang ditemukan dalam subquery yang akan datang.
+-- yang berfungsi sebagai HAVING MIN di outer query, sehingga hasilnya akan mengelompokkan data 
+berdasarkan department_id sehingga kita memiliki satu baris untuk setiap departemen dengan gaji terendah mereka. 
+-- operator HAVING untuk memeriksa apakah gaji terendah dalam departemen kurang 
+dari salah satu gaji yang ditemukan dalam subquery, dan 
+kemudian mengurutkan hasil berdasarkan department_id.
+
+
+SELECT department_id, MIN(salary)
+FROM employees
+GROUP BY department_id
+HAVING MIN(salary) < ANY
+(SELECT salary
+FROM employees
+WHERE department_id IN (10,20))
+ORDER BY department_id;
+
+
+-- Brandon Alexander Jayadi
+-- 535230088
+
+-- Query berikut terdiri dari outer query dan inner query, hasil dari inner querynya adalah untuk menselect manager_id, department_id dari table employees dimana employee_id nya 149 atau 174, akan menampilkan hasil manager id bernilai 100 dan 149, dan department_id bernilai 80
+-- yang berfungsi sebagai WHERE di outer query, jadi hasil dari outer querynya akan menampilkan employee_id yang bernilai 176, manager_id yang bernilai 149 dan department_id yang bernilai 80
+SELECT employee_id, manager_id, department_id
+FROM employees
+WHERE(manager_id,department_id) IN
+(SELECT manager_id,department_id
+FROM employees
+WHERE employee_id IN (149,174))
+AND employee_id NOT IN (149,174)
+
+-- Query berikut terdiri dari outer query dan 2 inner query, hasil dari inner query pertama adalah untuk menampilkan manager_id dimana employee_id nya bernilai 149 atau 174
+-- Hasil inner query yang kedua akan menampilkan department_id dimana employee_id nya bernilai 149 atau 174
+-- Berfungsi sebagai WHERE di outer query, jadi hasil dari outer querynya adalah menampilkan employee_id yang bernilai 176
+-- manager_id yang bernilai 149 dan department_id yang bernilai 80
+SELECT employee_id, manager_id, department_id
+FROM employees
+WHERE manager_id IN (SELECT manager_id
+FROM employees
+WHERE employee_id IN (149,174))
+AND department_id IN (SELECT department_id
+FROM employees
+WHERE employee_id IN (149,174))
+AND employee_id NOT IN(149,174);
+
+-- Query ini terdiri dari outer query dan inner query, hasil dari inner querynya akan menampilkan job_ib dari tabel employees yang dimana last_namenya bernama 'Ernst'
+-- yang berfungsi sebagai WHERE untuk outer query, jadi hasil outer querynya akan menampilkan first_name, last_name dan job_id yang dimana
+-- isi job_id nya berdasarkan dengan inner querynya yang dimana last_name nya 'Ernst' yaitu hasilnya IT_PROG
+SELECT first_name, last_name, job_id
+FROM employees
+WHERE job_id = (SELECT job_id
+FROM employees
+WHERE last_name = 'Ernst');
+
+-- Query ini terdiri dari outer query dan inner query, hasil dari inner querynya akan menampilkan job_ib dari tabel employees yang dimana last_namenya bernama 'Ernst'
+-- yang berfungsi sebagai WHERE untuk outer query, jadi hasil outer querynya akan menampilkan first_name, last_name dan job_id yang dimana
+-- isi job_id nya sama dengan inner querynya yang dimana last_name nya 'Ernst' yaitu hasilnya IT_PROG
+SELECT first_name, last_name, job_id
+FROM employees
+WHERE job_id IN (SELECT job_id
+FROM employees
+WHERE last_name = 'Ernst');
+
+-- DP 10-4 : Correlated Subqueries
+-- Query ini terdiri dari outer query dan inner query, hasil dari inner query ini tidak bisa jika tidak digabung dengan outer query
+-- Karena yang dikerjakan terlebih dahulu adalah inner query, sedangkan di inner query ada simbol yang hanya dipakai di outer query
+-- Intinya inner query itu untuk menampilkan rata-rata salary di department yang sama, yang berfungsi sebagai WHERE di outer query
+-- Jadi hasil outer querynya adalah menampilkan first_name, last_name, dan salary dimana salarynya lebih besar dari hasil inner querynya
+SELECT o.first_name, o.last_name, o.salary
+FROM employees o
+WHERE o.salary > (SELECT AVG(i.salary)
+FROM employees i
+WHERE i.department_id = o.department_id);
+
+
+--Georgia Sugisandhea
+--535230080
+
+SELECT last_name AS "Not a Manager"
+FROM employees emp
+WHERE NOT EXISTS (SELECT *
+FROM employees mgr
+WHERE mgr.manager_id = emp.employee_id);
+--NOT EXIST digunakan untuk query yang berada di bagian luar akan mengembalikan baris yang 
+--tidak sama di tabel subquery. Jika hanya tabel luar yang dijalankan, ada 20 nama yang dikembalikan,
+--namun ketika semuanya dijalankan hanya ada 12 baris yang dikeluarkan, dimana hanya last_name
+--pada tabel employees yang employee_id nya tidak sama dengan manager_id, jadi NOT EXISTS mencocokkan value.
+
+
+WITH managers AS
+(SELECT DISTINCT manager_id
+FROM employees
+WHERE manager_id IS NOT NULL)
+
+SELECT last_name AS "Not a manager"
+FROM employees
+WHERE employee_id NOT IN
+(SELECT mgr.manager_id
+FROM employees mgr);
+--untuk joins yang kompleks, bisa menggunakan WITH. WITH memperbolehkan pengguna membuat subquery dan dinamakan. Jadi daripada kita menuliskan
+--subqueries yang panjang sekali dalam query utama, kita bisa mengeluarkannya dengan with, dan memanggil namanya saja di dalam subquery.
+--namun dalam code ini subquery yang dibuat dengan WITH tidak digunakan, sehingga bagian WITH tidak diperlukan sebenarnya. Hasilnya juga sama saja.
+
+--not in mirip dengan not exists, tapi bedanya adalah, jika not exists, dia menyamakan value dan mengembalikan yang tidak sama
+--tapi kalo not in lebih ke mengembalikan yang tidak ada. Tapi karena subquery tersebut punya null, jadi mengembalikan 
+--value unknown, jadi tidak di evaluate oleh oracle, sehingga hasilnya no data found. Untuk memperbaiki hasil ini
+--bisa menggunakan is not null, atau not exists lebih aman
+--SELECT employee_id AS "Not a manager"
+--FROM employees
+--WHERE employee_id NOT IN
+--(SELECT mgr.manager_id
+--FROM employees mgr
+--WHERE mgr.manager_id IS NOT NULL); baru akan mengembalikan last name yang diinginkan
+
+
+WITH managers AS (SELECT DISTINCT manager_id FROM employees
+WHERE manager_id IS NOT NULL)
+
+SELECT last_name AS "Not a manager" FROM employees
+WHERE employee_id NOT IN 
+  (SELECT * FROM managers);
+--seperti yang sudah dijelaskan di code sebelumnya, WITH mengeluarkan subquery yang digunakan di
+--code sebelumnya, kemudian dinamakan dengan managers. Sehingga di main query, kita bisa langsung 
+--menggunakan FROM managers, padahal tabel managers aslinya tidak ada. Dan karena pada managers digunakan
+--IS NOT NULL, jadi tidak ada value null, sehingga pada main query menggunakan not in pun hasilnya tidak
+--not data found, tapi last names yang bukan manager.
+ 

@@ -1,0 +1,78 @@
+--Georgia Sugisandhea_535230080_kelas C
+--TK13021-SI13013 UTS Database Systems PRAK – REG PAGI
+
+--1. 
+SELECT TO_CHAR(SYSDATE, 'fmDay, Ddthsp "of" Month Year') AS "Date_Today"
+FROM DUAL;
+
+--2
+SELECT country_name, capitol, date_of_independence, currency_code
+FROM wf_countries
+WHERE location='Oceania';
+
+--3
+SELECT 'Huruf A ditemukan pada nama ' || last_name || ' pada posisi huruf ke ' || INSTR(UPPER(last_name), 'A') AS LETTER_POSITION
+FROM EMPLOYEES
+WHERE last_name LIKE '%a%' OR last_name LIKE '%A%';
+
+--4
+SELECT last_name, job_title, TO_CHAR(salary, '$99,999') AS "monthly_salary", TO_CHAR(salary*12, '$999,999') AS "annual_salary"
+FROM EMPLOYEES JOIN JOBS using(job_id)
+ORDER BY last_name;
+
+--5
+SELECT first_name||' '||last_name AS "Full_Name", department_name
+FROM EMPLOYEES JOIN DEPARTMENTS using(DEPARTMENT_ID)
+ORDER BY "Full_Name" desc;
+
+--6
+SELECT JOB_ID, JOB_TITLE, salary AS "Monthly Salary", salary*12 AS "Annual Salary"
+FROM JOBS NATURAL JOIN EMPLOYEES;
+
+--7a
+SELECT first_name, department_id, manager_id, salary
+FROM employees
+WHERE department_id=80 AND manager_id = 149;
+
+--7b
+SELECT department_name, location_id, city
+FROM departments JOIN locations using(location_id)
+WHERE city='Seattle';
+
+
+--SII13013 UTS Database Systems Praktikum
+--1
+SELECT last_name ||' hired on '||TO_CHAR(hire_date, 'YYYY') AS "EMPLOYEES ENTRY YEAR"
+FROM employees
+WHERE department_id = :user_deptartment_id;
+
+--2
+SELECT first_name||' '||last_name||' works on '||department_name AS "Employees Information"
+FROM employees JOIN departments using(department_id);
+
+--3
+SELECT last_name, job_title, department_id, TO_CHAR(salary, '$999,999') AS "MONTHLY_SALARY", TO_CHAR(salary*12, '$999,999') AS "ANNUAL_SALARY"
+FROM employees JOIN jobs using(job_id)
+WHERE department_id = 90 OR department_id = 70 OR department_id = 60;
+
+--5
+SELECT last_name, INSTR(UPPER(last_name), UPPER(:letter)) AS letter_position
+FROM employees
+WHERE UPPER(last_name) LIKE UPPER('%' ||:letter||'%') OR LOWER(last_name) LIKE LOWER('%' ||:letter||'%')
+ORDER BY last_name;
+
+--6a
+SELECT first_name, department_id, salary
+FROM employees
+WHERE department_id=70 AND salary>15000;
+
+--6b
+SELECT last_name, department_name
+FROM employees JOIN departments using(department_id)
+WHERE location_id > 1700;
+
+
+
+
+
+

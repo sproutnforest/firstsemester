@@ -1,0 +1,51 @@
+--Georgia Sugisandhea
+--535230080
+
+SELECT last_name AS "Not a Manager"
+FROM employees emp
+WHERE NOT EXISTS (SELECT *
+FROM employees mgr
+WHERE mgr.manager_id = emp.employee_id);
+--NOT EXIST digunakan untuk query yang berada di bagian luar akan mengembalikan baris yang 
+--tidak sama di tabel subquery. Jika hanya tabel luar yang dijalankan, ada 20 nama yang dikembalikan,
+--namun ketika semuanya dijalankan hanya ada 12 baris yang dikeluarkan, dimana hanya last_name
+--pada tabel employees yang employee_id nya tidak sama dengan manager_id, jadi NOT EXISTS mencocokkan value.
+
+WITH managers AS
+(SELECT DISTINCT manager_id
+FROM employees
+WHERE manager_id IS NOT NULL)
+
+SELECT last_name AS "Not a manager"
+FROM employees
+WHERE employee_id NOT IN
+(SELECT mgr.manager_id
+FROM employees mgr);
+--untuk joins yang kompleks, bisa menggunakan WITH. WITH memperbolehkan pengguna membuat subquery dan dinamakan. Jadi daripada kita menuliskan
+--subqueries yang panjang sekali dalam query utama, kita bisa mengeluarkannya dengan with, dan memanggil namanya saja di dalam subquery.
+--namun dalam code ini subquery yang dibuat dengan WITH tidak digunakan, sehingga bagian WITH tidak diperlukan sebenarnya. Hasilnya juga sama saja.
+
+--not in mirip dengan not exists, tapi bedanya adalah, jika not exists, dia menyamakan value dan mengembalikan yang tidak sama
+--tapi kalo not in lebih ke mengembalikan yang tidak ada. Tapi karena subquery tersebut punya null, jadi mengembalikan 
+--value unknown, jadi tidak di evaluate oleh oracle, sehingga hasilnya no data found. Untuk memperbaiki hasil ini
+--bisa menggunakan is not null, atau not exists lebih aman
+--SELECT employee_id AS "Not a manager"
+--FROM employees
+--WHERE employee_id NOT IN
+--(SELECT mgr.manager_id
+--FROM employees mgr
+--WHERE mgr.manager_id IS NOT NULL); baru akan mengembalikan last name yang diinginkan
+
+WITH managers AS (SELECT DISTINCT manager_id FROM employees
+WHERE manager_id IS NOT NULL)
+
+SELECT last_name AS "Not a manager" FROM employees
+WHERE employee_id NOT IN 
+  (SELECT * FROM managers);
+
+--seperti yang sudah dijelaskan di code sebelumnya, WITH mengeluarkan subquery yang digunakan di
+--code sebelumnya, kemudian dinamakan dengan managers. Sehingga di main query, kita bisa langsung 
+--menggunakan FROM managers, padahal tabel managers aslinya tidak ada. Dan karena pada managers digunakan
+--IS NOT NULL, jadi tidak ada value null, sehingga pada main query menggunakan not in pun hasilnya tidak
+--not data found, tapi last names yang bukan manager.
+ 

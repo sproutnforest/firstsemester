@@ -1,0 +1,186 @@
+--GEORGIA SUGISANDHEA_535230080_KELASC
+--create
+--create table mahasiswa
+
+drop table tb_mahasiswa;
+
+create table tb_mahasiswa
+(npm varchar2 (5),
+nama varchar2 (50) not null,
+tgl_lahir date,
+jenis_kel varchar2 (10)
+);
+
+create table df(
+    ID NUMBER(10) PRIMARY KEY,
+    DESCRIPTION VARCHAR2(50) not null
+    );
+
+create sequence dept_seq
+    start with 100
+    increment by 1
+    maxvalue 105;
+
+drop sequence dept_seq;
+select * from df;
+
+drop table df;
+
+
+INSERT INTO df(id, description)
+    VALUES(dept_seq.nextval, 'just DESCRIPTION');
+
+
+ALTER SEQUENCE dept_seq
+INCREMENT BY 2;
+
+alter sequence dept_seq
+minvalue 1000;
+
+alter sequence dept_seq
+maxvalue 110;
+
+alter sequence dept_seq
+restart with 102;
+
+
+
+create table tb_mahasiswa1
+(npm number(5),
+nama varchar2(50) not null,
+tgl_lahir date,
+jenis_kel varchar2 (10)
+);
+
+desc tb_mahasiswa;
+
+insert into tb_mahasiswa1 values (dept_seq.nextval, 'Andy', '05-Jan-1998', 'Laki-Laki');
+
+select * from tb_mahasiswa;
+
+
+--mau delete salah 1
+select rowid, npm from tb_mahasiswa1;
+
+delete from tb_mahasiswa1 where rowid = 'SSSGLdAABAALUSAA';
+
+select * from tb_mahasiswa1;
+
+--user tables = mengetahui ada table apa saja di db yang dimiliki oleh user
+--yang sedang log on sekarang
+select * from user_tables;
+--data dictionary = informasi db
+select table_name, status from user_table;
+select table_name, status from all_tables; -- mengetahui seluruh table di db
+select * from user_indexes;
+select * from user_objects where object_type = 'SEQUENCE';
+
+--timestamp
+create table time_ex1
+(exact_time TIMESTAMP);
+
+drop table time_ex1;
+
+desc time_ex1;
+
+insert into time_ex1 (exact_time) values
+(to_timestamp ('2014-07-02 06:14:00.123456', 'YYYY-MM-DD HH24:MI:SS.FF'));
+
+select * from time_ex1;
+
+insert into time_ex1 values (SYSDATE); --milisecond ga terbaca
+--harus pakai ini agar milisecondnya terbaca
+insert into time_ex1 values (SYSTIMESTAMP);
+insert into time_ex1 (exact_time) value (to_timestamp('2014-07-02', 'YYYY-MM-DD'));
+
+--timestamp dengan local time zone
+create table time_ex2
+(time_with_offset TIMESTAMP WITH TIME ZONE);
+
+drop table time_ex2;
+
+insert into time_ex2 (time_with_offset) values (SYSTIMESTAMP);
+
+select * from time_ex2;
+--interval
+--interval year to month
+create table time_ex5
+(loan duration1 interval year to month,
+loan_duration2 interval year to month,
+loan_duration3 interval year to month);
+
+drop table time_ex5;
+
+select * from time_ex5;
+
+insert into time_ex5(loan_duration1, loan_duration2, loan)_duration3
+values(interbal '120' month, interval'10-1' year to month, interval '11' year);
+
+select * from time_ex5;
+
+select sysdate,
+sysdate + loan_duration1, --120 bulan
+sysdate + loan_duration2 --10 tahun 1 bulan
+from time_ex5;
+
+--interval day to second
+create table time_ex6
+(day_duration1 interval day to second,
+day_duration2 interval day to second);
+
+drop table time_ex6;
+
+insert into time_ex6 (day_duration1, day_duration2)
+values(interval'25' day(2), interval '4 10:30:10' day to second);
+
+select * from time_ex6;
+
+select sysdate,
+sysdate + day_duration1,
+to_char (sysdate + day_duration2, 'DD-Mon-YYYY HH:MI:SS')
+FROM time_ex6;
+
+
+--modifikasi kolom
+DESC tb_mahasiswa1;
+
+alter table tb_mahasiswa1 modify(nama varchar(30));
+alter table tb_mahasiswa1 modify(jenis_ke1 varchar2(9));
+
+--drop column = hapus kolom
+
+alter table tb_mahasiswa drop column jenis_ke1;
+
+alter table tb_mahasiswa drop column sekolah_asal, email; --gabisa multiple column so error
+
+--set unused
+alter table tb_mahasiswa1 set unused (tgl_lahir);
+select * from tb_mahasiswa1;
+alter table tb_mahasiswa1 drop unused columns;
+
+desc tb_mahasiswa1;
+
+--drop table
+
+create table copy_emp as select * from employees;
+drop table copy_emp;
+
+select * from copy_emp;
+
+rename copy_emp to emp2;
+select * from copy_emp; --error
+
+--truncate = menghapus keseluruhan isi table, tabelnya ga kehapus
+truncate table emp2;
+select * from emp2;
+
+--comment on tanle
+comment on table employees is 'ini table employee';
+
+select table_name, comments
+from user_tab_comments
+where table_name = 'employees'; --ga muncul
+
+select table_name, comments
+from user_tab_comments
+where table_name = 'EMPLOYEES';

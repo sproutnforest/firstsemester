@@ -1,0 +1,118 @@
+--Georgia Sugisandhea_535230080_Kelas C
+select * from employees;
+drop view view_employees;
+
+create view view_employees
+as select employee_id, first_name, last_name, email
+from employees
+where employee_id between 100 and 124;
+
+select * from view_employees;
+drop view view_employees;
+
+create or replace view view_euro_countries
+as select country_id as "ID", country_name as "Country", capitol as "Capitol City"
+from wf_countries
+where location like '%Europe';
+
+create or replace view view_euro_countries("ID", "Country", "Capitol City", "Location")
+as select country_id, country_name, capitol, location
+from wf_countries
+where location like '%Europe'
+order by country_id;
+
+select * from view_euro_cuntries;
+
+--complex view
+create or replace view view_euro_countries
+("ID", "Country", "Capitol City", "Region")
+as select c.country_id, c.country_name, c.capitol, r.region_name
+from wf_countries c join wf_world_regions
+using (region_id)
+where location like '%Europe';
+
+select * from view_euro_countries;
+
+create table copy_emp as select * from employees;
+select * from copy_emp;
+drop table copy_emp;
+
+create or replace view view_dept50
+as select department_id, employee_id, first_name, last_name, salary
+from copy_emp
+where department_id=50;
+
+drop view view_dept50;
+
+select * from view_dept50;
+
+update view_dept50
+set salary=6000
+where employee_id=124;
+
+select first_name, employee_id, salary
+from copy_emp
+where employee_id = 124;
+
+--controlling view
+--check option
+--update untuk kolim department tidak akan berfungsi
+create or replace view view_dept50_ck
+as select department_id, employee_id, first_name, last_name, salary
+from employees
+where department_id=50
+with check option constraint view_dept50_check; 
+--check option constraint itu ngecek yang kolom pertama, jdi kolom pertama itu gabisa diubah
+
+create or replace view view_dept50_ck
+as select employee_id, manager_id, first_name, last_name, salary
+from employees
+with check option constraint view_dept50_check;
+
+select * from view_dept50_ck;
+
+drop view view_dept50_ckl
+
+update view_dept5o_ck
+set first_name = 'd'
+where employee_id = 141;
+
+update view_dept50_ck
+set employee_id = 102
+where manager_id = 100;
+
+update view_dept50
+set salary = 90
+where employee_id = 149;
+
+--read only (tidak bisa melakukan operasi dml)
+create or replace view view_dept50
+as select department_id, employee_id, first_name, last_name, salary
+from employees
+where department_id = 50
+with read only;
+
+select * from view_dept50;
+
+--view with subquery
+create or replace view view_sub as
+select e.last_name, e.salary, e.department_id, d.maxsal
+from employees e, 
+    (select department_id, max(salary) as maxsal
+        from employees
+            group by department_id) d
+where e.department_id = d.department_id
+and e.salary = d.maxsal;
+
+select * from view_sub;
+
+select * from view_row;
+
+--menampilkan 5 baris teratas
+create view view_row as
+select rownum as "longest employed", last_name, hire_date
+from employees
+where rownum <= 5
+order by hire_date;
+
+select last_name, hire_date from employees;

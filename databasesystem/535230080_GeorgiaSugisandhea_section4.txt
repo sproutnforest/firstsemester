@@ -1,0 +1,197 @@
+--Georgia Sugisandhea-535230080-kelasC
+--DUAL
+SELECT (12*5)/2 AS Hasil
+FROM DUAL;
+
+--LOWER
+SELECT last_name
+FROM employees
+WHERE LOWER(last_name) = 'king'; --lower is to lowcase all, so its supposed to be King;
+
+--to show returned but lowcase
+SELECT LOWER(last_name)
+FROM employees
+
+--UPPER (opposite from lower)
+SELECT upper(last_name)
+FROM employees
+WHERE UPPER(last_name) = 'ABEL';
+
+--INITCAP (to capitalize the first)
+SELECT last_name
+FROM employees
+WHERE INITCAP(last_name) = 'Abel';
+
+--CONCAT (to put them together)
+SELECT CONCAT('Hello ' , 'World')
+FROM DUAL;
+
+SELECT CONCAT(CONCAT(first_name , ' ') , last_name) as fullname
+FROM employees;
+
+--SUBSTR (to only show from charcter 1 to 6 according to the number put in)
+SELECT SUBSTR('Hello World', 1, 6)
+FROM DUAL;
+
+SELECT SUBSTR('HelloWorld', 6, 10)
+FROM DUAL;
+
+SELECT SUBSTR(last_name, 1, 1)
+FROM employees;
+
+--LENGTH (to show total character of the string)
+SELECT LENGTH ('Hello World')
+FROM DUAL;
+
+--INSTR (to show total character until the letter put)
+SELECT INSTR('HelloWorld', 'W')
+FROM DUAL;
+
+SELECT last_name, INSTR(last_name, 'a')
+FROM employees;
+
+--LPAD (to add character put in the left side)
+SELECT LPAD('HelloWorld', 15, '-')
+FROM DUAL;
+
+SELECT LPAD(last_name, 10, '^')
+FROM employees;
+
+--RPAD (to add character put in the right side)
+SELECT RPAD('HelloWorld', 15, '-')
+FROM DUAL;
+
+SELECT RPAD(last_name, 10, '*')
+FROM employees;
+
+--TRIM 
+SELECT TRIM(LEADING 'a' FROM 'abcba') --to take away the leading a
+FROM DUAL;
+
+SELECT TRIM(TRAILING 'a' FROM 'abcba') --to take away the tail a
+FROM DUAL;
+
+SELECT TRIM(BOTH 'a' FROM 'abcba') --to take away both a
+FROM DUAL;
+
+--REPLACE
+SELECT REPLACE('JACK and JUE', 'J', 'BL')
+FROM DUAL;
+
+SELECT REPLACE('JACK and JUE', 'J') --no replacement for J, basically deleting them
+FROM DUAL;
+
+SELECT REPLACE(last_name, 'a', '*')
+FROM employees;
+
+SELECT LOWER(last_name)||
+LOWER(SUBSTR(first_name,1,1))
+AS "User Name"
+FROM employees;
+
+--SUBSTITUTION Variable
+
+SELECT first_name, last_name, salary, department_id
+FROM employees
+WHERE department_id = 50;
+
+SELECT first_name, last_name, salary, department_id
+FROM employees
+WHERE department_id=:DEPT_id;
+
+--only works on sqldev
+SELECT first_name, last_name, salary, department_id
+FROM employees
+WHERE department_id= &dept_id;
+
+SELECT *
+FROM employees
+WHERE last_name ='&1_name';
+
+--SUBSTITUTION Variable for string
+SELECT *
+FROM employees
+WHERE last_name = :1_name;
+
+--ROUND 
+
+SELECT ROUND(10.675, 0)
+FROM DUAL;
+
+SELECT ROUND(10.675, 2) --2 number after comma
+FROM DUAL;
+
+--TRUNC = take off all number after comma
+SELECT TRUNC(10.675, 0)
+FROM DUAL;
+
+SELECT TRUNC(10.675, 2) --take off after 2 number after comma
+FROM DUAL; 
+
+--MOD
+SELECT MOD(11,2)
+FROM DUAL;
+
+select airports FROM wf_countries;
+
+SELECT country_name, MOD(airports,2)
+AS"Mod Demo"
+FROM wf_countries;
+
+--DATE function
+
+--SYSDATE = to show today's date
+
+SELECT SYSDATE
+FROM DUAL;
+
+SELECT sysdate + 60 --add 60 days
+FROM DUAL;
+
+SELECT last_name, hire_date + 60, hire_date
+FROM employees;
+
+select last_name, ROUND((SYSDATE - hire_date)/7, 0) from employees;
+
+--MONTHS BETWEEN 
+
+SELECT last_name, hire_date, ROUND(MONTHS_BETWEEN(SYSDATE, hire_date),0)
+FROM employees
+WHERE MONTHS_BETWEEN(SYSDATE, hire_date) > 240;
+
+SELECT last_name, hire_date, TRUNC(MONTHS_BETWEEN(SYSDATE, hire_date),0)
+FROM employees
+WHERE MONTHS_BETWEEN(SYSDATE, hire_date) > 240;
+
+--ADD MONTHS
+SELECT ADD_MONTHS(SYSDATE,12) AS "NEXT YEAR"
+FROM DUAL;
+
+--NEXT_DAY : showing the date of the day searched
+SELECT NEXT_DAY(SYSDATE, 'Saturday') AS "NEXT SATURDAY"
+FROM DUAL;
+
+--LAST DAY : showing the last day of the current month
+SELECT LAST_DAY(SYSDATE)
+FROM DUAL;
+
+--ROUND in date function
+SELECT hire_date, ROUND(hire_date, 'Month')
+FROM employees
+WHERE department_id = 50;
+
+SELECT hire_date, ROUND(hire_date, 'YEAR')
+FROM employees
+WHERE department_id = 50;
+
+SELECT hire_date, TRUNC(hire_date, 'Month')
+FROM employees
+WHERE department_id = 50;
+
+SELECT hire_date, TRUNC(hire_date, 'YEAR')
+FROM employees
+WHERE department_id = 50;
+
+SELECT employee_id, hire_date, round(months_between(sysdate, hire_date)) AS TENURE, add_months (hire_date, 6) as review, next_day(hire_date, 'friday') "next day", last_day(hire_date) "last day"
+FROM employees
+WHERE months_between (sysdate, hire_date) > 36;

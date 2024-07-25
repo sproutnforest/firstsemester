@@ -1,0 +1,307 @@
+--Georgia Sugisandhea_535230080
+
+--CONSTRAINT ON COLUMN LEVEL
+drop table tb_mahasiswa;
+
+create table tb_mahasiswa (
+    nim CHAR(5) constraint mhs_pk primary key,
+    nama varchar2(50),
+    tgl_lahir date,
+    jenis_kel varchar2(10));
+
+select contraint_name, constraint_type, status
+from user_contraints
+where table_name = 'TB_MAHASISWA';
+
+select constraint_name, constraint_type, status
+from user_constraints
+where table_name = 'tb_mahasiswa';
+
+drop table tb_mahasiswa;
+
+--constraint di table level
+create table tb_mahasiswa(
+    npm char(5),
+    nama varchar2(50),
+    tgl_lahir date,
+    jenis_kel varchar2(10),
+    constraint mhs_pk primary key (npm)
+);
+
+select * from tb_mahasiswa;
+
+insert into tb_mahasiswa values ('12345', 'Andi', TO_DATE('10-DEC-2000', 'DD-MON-YYYY'), 'L');
+insert into tb_mahasiswa values ('12345', 'Ando', TO_DATE('10-DEC-2000', 'DD-MON-YYYY'), 'L');
+
+--not null
+drop table tb_mahasiswa;
+
+create table tb_mahasiswa(
+    npm char(5) constraint mhs_pk primary key,
+    nama varchar2(50) constraint nama_nn not null,
+    tgl_lahir date,
+    jenis_kel varchar2(10));
+
+insert into tb_mahasiswa (npm, tgl_lahir, nama)
+values ('53502', TO_DATE('10-DEC-2000', 'DD-MON-YYYY'), 'Rio');
+
+select * from tb_mahasiswa;
+
+insert into tb_mahasiswa (npm, tgl_lahir, nama)
+values ('53502', TO_DATE('10-DEC-2000', 'DD-MON-YYYY'), null);
+
+--unique
+
+drop table tb_mahasiswa;
+
+create table tb_mahasiswa(
+    npm char(5) constraint mhs_pk primary key,
+    nama varchar2(50) constraint nama_nn not null,
+    tgl_lahir date,
+    jenis_kel varchar2(10),
+    email varchar2(30) constraint email_un unique);
+
+
+select constraint_name, constraint_type, status
+from user_constraints
+where table_name = 'TB_MAHASISWA';
+
+insert into tb_mahasiswa values
+('12345', 'Ana', TO_DATE('10-DEC-2000', 'DD-MON-YYYY'), 'F', 'email@email.com');
+insert into tb_mahasiswa values
+('12341', 'Ano', TO_DATE('10-DEC-2000', 'DD-MON-YYYY'), 'L', 'email@email.com');
+insert into tb_mahasiswa values
+('12341', 'Ani', TO_DATE('10-DEC-2000', 'DD-MON-YYYY'), 'F', null);
+insert into tb_mahasiswa values
+('12343', 'Ane', TO_DATE('10-DEC-2000', 'DD-MON-YYYY'), 'F', null);
+
+
+select * from tb_mahasiswa;
+
+--composite unique key
+drop table clients;
+
+create table clients(
+    client_number number(6) not null,
+    first_name varchar2(20),
+    last_name varchar2(20),
+    phone varchar2(20),
+    email varchar2(30) not null,
+    constraint clients_phone_email_uk unique (email, last_name));
+
+select constraint_name, constraint_type, status
+from user_constraints
+where table_name='CLIENTS';
+
+
+
+insert into clients values(1234, 'Lauren', 'Vigil', '407220090', 'lb@lbv.net');
+--2 cluent tgl di rumah sama, email sama.
+insert into clients values(1232, 'Laurea', 'Vigil', '407220091', 'lb@lbv.net');
+
+select * from clients;
+
+insert into clients values(1231, 'Lauren', 'Vigoo', '4072220090', 'lb@lbv.net');
+
+insert into clients values(1235, 'Lauren', 'Vigoo', '4072220092', 'email@lbv.net');
+
+--primary key constraints
+
+--check constraints
+
+drop table tb_mahasiswa;
+
+--table level
+create table tb_mahasiswa(
+    npm char(5) constraint mhs_pk primary key,
+    nama varchar2(50) constraint nama_nn not null,
+    tgl_lahir date,
+    jenis_kel varchar2(1),
+    email varchar2(30) constraint email_un unique,
+    constraint mhs_jk_ch check (jenis_kel IN ('L', 'F')));
+
+
+insert into tb_mahasiswa
+values('53555', 'Any', TO_DATE('05-JAN-2000', 'DD-MON-YYYY'), 'P', 'aaaa@email.com');
+
+insert into tb_mahasiswa
+values('53555', 'Any', TO_DATE('05-JAN-2000', 'DD-MON-YYYY'), 'A', 'aaaa@email.com');
+
+select * from tb_mahasiswa;
+
+--column level
+create table tb_mahasiswa(
+    npm char(5) constraint mhs_pk primary key,
+    nama varchar2(50) constraint nama_nn not null,
+    tgl_lahir date,
+    jenis_kel varchar2(10) constraint mhs_jk_ch check (jenis_kel IN ('L', 'F')),
+    email varchar2(30) constraint email_un unique);
+
+select constraint_name, constraint_type, status
+from user_constraints
+where table_name = 'TB_MAHASISWA';
+
+
+insert into tb_mahasiswa
+values('53555', 'Any', TO_DATE('05-JAN-2000', 'DD-MON-YYYY'), 'F', 'aaaa@email.com');
+
+
+
+--foreign key constraints
+drop table program_studi;
+drop table tb_mahasiswa;
+
+create table program_studi(
+    kode_prodi char(2) constraint prod_code primary key,
+    nama_prodi varchar(50) constraint prod_nn not null
+)
+
+create table tb_mahasiswa(
+    npm char(5) constraint mhs_pk primary key,
+    nama varchar2(50) constraint nama_nn not null,
+    tgl_lahir date,
+    jenis_kel varchar2(10) constraint mhs_jk_ch check (jenis_kel IN ('L', 'F')),
+    email varchar2(30) constraint email_un unique
+    kode_prodi char(2),
+    constraint mhs_jk_ch check (jenis_kel in ('L', 'P')),
+    constraint mhs_pk_fk foreign key(kode_prodi)
+    references program_studi (kode_prodi));
+
+select constraint_name, constraint_tyoem status
+from user_constraints
+where table_name='TB_MAHASISWA';
+
+--ON DELETE CASCADE
+--baris yang bergantung di child table dihapus ketika baris di parent table dihapus
+
+drop table tb_mahasiswa;
+
+create table tb_mahasiswa(
+    npm char(5) constraint mhs_pk primary key,
+    nama varchar2(50) constraint nama_nn not null,
+    tgl_lahir date,
+    jenis_kel varchar2(10) constraint mhs_jk_ch check (jenis_kel IN ('L', 'F')),
+    email varchar2(30) constraint email_un unique,
+    kode_prodi char(2),
+    constraint mhs_jk_che check (jenis_kel in ('L', 'P')),
+    constraint mhs_pk_fk foreign key(kode_prodi)
+    references program_studi (kode_prodi) on delete cascade);
+
+insert into program_studi values('11', 'Teknik Informatika');
+insert into program_studi values('12', 'Sistem Informasi');
+
+insert into tb_mahasiswa values('11111', 'Andy', TO_DATE('05-JAN-2000', 'DD-MON-YYYY'), 'L', 'andy@email.com', '11');
+
+insert into tb_mahasiswa values('22222', 'Sandy', TO_DATE('05-JAN-2000', 'DD-MON-YYYY'), 'F', 'sandy@email.com', '12');
+
+select * from tb_mahasiswa;
+
+delete from program_studi where kode_prodi='11';
+
+select * from program_studi;
+
+-- on delete set null
+--yang ini klo di delete jdi null instead of kehapus satu row
+drop table tb_mahasiswa;
+
+create table tb_mahasiswa(
+    npm char(5) constraint mhs_pk primary key,
+    nama varchar2(50) constraint nama_nn not null,
+    tgl_lahir date,
+    jenis_kel varchar2(10) constraint mhs_jk_ch check (jenis_kel IN ('L', 'F')),
+    email varchar2(30) constraint email_un unique,
+    kode_prodi char(2),
+    constraint mhs_jk_che check (jenis_kel in ('L', 'P')),
+    constraint mhs_pk_fk foreign key(kode_prodi)
+    references program_studi (kode_prodi) on delete set null);
+
+select * from program_studi;
+
+
+insert into program_studi values('11', 'Teknik Informatika');
+
+insert into tb_mahasiswa values('12111', 'Andy', TO_DATE('05-JAN-2000', 'DD-MON-YYYY'), 'L', 'andy@email.com', '11');
+
+insert into tb_mahasiswa values('11111', 'Andy', TO_DATE('05-JAN-2000', 'DD-MON-YYYY'), 'L', 'andy@email.com', '12');
+
+select * from tb_mahasiswa;
+
+delete from program_studi where kode_prodi='11';
+
+--alter constraint
+select constraint_name, constraint_tyoem status
+from user_constraints
+where table_name='TB_MAHASISWA';
+
+alter table tb_mahasiswa add sekolah_asal varchar2(50);
+
+desc tb_mahasiswa;
+
+insert into tb_mahasiswa values('11112', 'Ando', TO_DATE('05-JAN-2000', 'DD-MON-YYYY'), 'L', 'ando@email.com', '12', 'SMA 123');
+
+select * from tb_mahasiswa;
+delete from tb_mahasiswa where npm='12111';
+delete from tb_mahasiswa where npm='11111';
+
+--tambah constraint not null ke sekolah asal
+alter table tb_mahasiswa
+modify(sekolah_asal constraint mhs_skl_nn not null);
+
+alter table yourtable
+add constraint unique_constraint_name
+unique(yourcolumn);
+
+alter table exampletable
+add constraint check_positive_value check (value>0);
+
+alter table tb_mahasiswa drop column sekolah_asal;
+
+
+--drop constraint
+
+--parent table & child table
+select constraint_name, constraint_type, status
+from user_constraints
+where table_name = 'TB_MAHASISWA';
+
+select constraint_name, constraint_type, status
+from user_constraints
+where table_name='PROGRAM_STUDI';
+
+--drop constraint cascade
+
+alter table program_studi drop constraint ps_pk cascade;
+select * from program_studi;
+select * from tb_mahasiswa;
+
+alter table tb_mahasiswa drop constraint mhs_skl_nn cascade;
+
+alter table program_studi
+modify(kode_prodi constraint ps_pk primary key);
+
+alter table program_studi
+add constraint ps_pk primary key (kode_prodi);
+
+alter table tb_mahasiswa
+add constraint ps_pk_fk
+foreign key (kode_prodi)
+references program_studi(kode_prodi);
+
+--disable constraint
+alter table tb_mahasiswa disable constraint mhs_jk_ch;
+
+insert into tb_mahasiswa values('53525', 'Any', TO_DATE('05-JAN-2000', 'DD-MON-YYYY'), 'A', 'aaaaa@email.com', '11', 'sma');
+
+delete from tb_mahasiswa where npm='53525';
+
+--disable cascade
+alter table program_studi disable constraint ps_pk cascade;
+
+delete all from program_studi
+
+--enable constraint
+alter table tb_mahasiwswa enable constraint mhs_jk_ch;
+
+--view = hak akses pada sebagian data pada table tanpa akses langsung
+
+select * from employees;

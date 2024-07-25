@@ -1,0 +1,119 @@
+--Georgia Sugisandhea_535230080
+--section 5
+
+--conversion of date = TO_CHAR(date column name, 'format model you specified')
+
+SELECT TO_CHAR(hire_date, 'Month dd, YYYY')
+FROM EMPLOYEES;
+
+--fm: to remove character leading, zero, or space
+SELECT TO_CHAR(hire_date, 'fmMonth dd, YYYY') 
+FROM EMPLOYEES
+
+SELECT TO_CHAR(hire_date, 'fmMonth, ddth, YYYY')
+FROM EMPLOYEES;
+
+--writing dates as pronounced
+SELECT TO_CHAR(hire_date, 'fmDay ddthsp Mon, YYYY') --Mon means the month is only Jan, Feb
+FROM EMPLOYEES;
+
+SELECT TO_CHAR(hire_date, 'fmDay, ddthsp "of" Month, Year')
+FROM EMPLOYEES;
+
+--date conversion to character data
+SELECT TO_CHAR(SYSDATE, 'hh:mm')
+FROM DUAL;
+
+SELECT TO_CHAR(SYSDATE, 'hh:mm pm')
+FROM DUAL;
+
+SELECT TO_CHAR(SYSDATE, 'hh:mm:ss pm')
+FROM DUAL;
+
+SELECT TO_CHAR(salary, '$99,999') AS "Salary"
+FROM EMPLOYEES;
+
+--Number conversion to Character Data
+SELECT TO_CHAR(3000, '$99999,99')
+FROM DUAL;
+
+SELECT TO_CHAR(4500, '99,999')
+FROM DUAL;
+
+SELECT TO_CHAR(9000, '99,999.99')
+FROM DUAL;
+
+SELECT TO_CHAR(4422, '0009999')
+FROM DUAL;
+
+SELECT last_name, TO_NUMBER(bonus, '9999') AS "Bonus"
+FROM EMPLOYEES
+WHERE DEPARTMENT_ID = 80;
+
+SELECT TO_DATE('May10,1989', 'fxMonDD,YYYY') AS "Convert" --to search this date, when we dont know the date format
+FROM DUAL;
+
+SELECT TO_DATE('Sep 07,1965', 'fxMon dd,YYYY') AS "Date"
+FROM DUAL;
+
+SELECT TO_DATE('July312004', 'fxMonthDDYYYY') AS "Date"
+FROM DUAL;
+
+SELECT TO_DATE('June 10,1990', 'fxMonth dd,YYYY') AS "Date"
+FROM DUAL;
+
+SELECT last_name, TO_CHAR(hire_date, 'DD-Mon-RR')
+FROM EMPLOYEES;
+WHERE hire_date<TO_DATE('01-Jan-90', 'DD-Mon-RR'); --hire date has to be smaller than 01-Jan-90, RR to prevent under 90, its supposed to be 1990
+
+--DP 5-2
+SELECT TO_CHAR(NEXT_DAY(ADD_MONTHS(hire_date, 6), 'FRIDAY'),
+'fmDay, Month ddth, YYYY') AS "Next Evaluation"
+FROM employees
+WHERE employee_id = 100;
+
+--NVL: to change null with default
+SELECT country_name, NVL(internet_extension, 'None')as" Internet extn"
+FROM wf_countries
+WHERE location = 'Southern Africa'
+ORDER BY internet_extension DESC;
+
+SELECT last_name, NVL(commission_pct, 0)*250 AS "Commission"
+FROM employees
+WHERE department_id IN(80,90);
+
+--NVL only had 2 parameters, changing null value with alternative value. But NVL2 has 3 parameters, both condition has alternative value
+SELECT last_name, salary, NVL2(commission_pct, salary + (salary*commission_pct), salary)
+AS income
+FROM employees
+WHERE department_id IN(80,90);
+
+--NULLIF: if both collumn has the same length, then the output is NULL
+SELECT first_name, LENGTH(first_name) AS "Length FN", last_name, LENGTH(last_name) AS "Length LN", NULLIF(LENGTH(first_name), LENGTH(last_name)) AS "Compare Them"
+FROM employees
+
+--COALESCE: getting first value that isnt null from some expression or collumn
+SELECT last_name, COALESCE(commission_pct, salary, 10) AS "Comm" --itll show 10 if both commission pct and salary is null
+FROM employees
+ORDER BY commission_pct;
+
+--DP-5-3
+SELECT last_name,
+CASE department_id
+WHEN 90 THEN 'Management'
+WHEN 80 THEN 'Sales'
+WHEN 60 THEN 'IT'
+ELSE 'Other Dept.'
+END
+AS "Department"
+FROM employees;
+
+SELECT last_name,
+DECODE(department_id, 
+90, 'Management',
+80, 'Sales',
+60, 'IT',
+'Other dept.')
+AS "Department"
+FROM employees;
+

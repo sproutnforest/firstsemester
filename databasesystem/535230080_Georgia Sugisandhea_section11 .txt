@@ -1,0 +1,112 @@
+--Georgia Sugisandhea_535230080
+CREATE TABLE copy_dept AS SELECT * FROM departments;
+SELECT * FROM copy_dept;
+
+DESCRIBE copy_dept;
+CREATE TABLE copy_emp AS SELECT * FROM employees;
+DESCRIBE employees;
+SELECT * FROM copy_emp;
+
+--implicit, diisi sesuai urutan tabel
+INSERT INTO copy_dept
+VALUES(150, 'Business Analyst', 105, 1700);
+
+INSERT INTO copy_dept VALUES (250, NULL, 105, 1700); --not valid
+
+INSERT INTO comp_emp VALUES 
+(203, 'Human', 'Orang', 'HUMAN', '601.234.5678', '31-12-2010', 'IT_PROG', 340, NULL, NULL, 60, NULL)
+
+--explicit, yang diisi sesuai dengan yang kita masukkan
+INSERT INTO copy_dept
+(department_name, department_id, manager_id)
+VALUES('Human Resources', 130, 102);
+
+SELECT *FROM copy_dept;
+
+INSERT INTO copy_emp
+(employee_id, first_name, last_name, email, phone_number, hire_date, job_id, salary)
+VALUES (307, 'Georgia', USER, 'furrypolo@mymail.com', '777-19-01-2006', SYSDATE, 'MK_REP', 4200);
+
+INSERT INTO copy_dept
+(department_id, manager_id, department_name, location_id)
+VALUES(:dept_id, :manager_id, :dept_name, 120);
+
+INSERT INTO copy_emp
+(employee_id, first_name, last_name, email, phone_number, hire_date, job_id, salary)
+VALUES (302, 'Grigorz', 'Polanski', 'gpolanski','', TO_DATE('July 8, 2017', 'Month fmdd, yyyy'), 'IT_PROG', 4200);
+
+CREATE TABLE copy_emp_2 AS SELECT * FROM employees;
+SELECT * FROM copy_emp_2;
+DESC copy_emp_2;
+
+INSERT INTO copy_emp_2
+    SELECT * FROM copy_emp WHERE last_name = 'Polanski';
+
+SELECT * FROM copy_emp WHERE last_name = 'Polanski';
+
+UPDATE copy_dept
+SET manager_id = 100, location_id=1500
+WHERE department_id=20;
+
+UPDATE copy_emp
+SET salary =
+    (SELECT salary FROM employees WHERE last_name = 'King'),
+job_id =
+    (SELECT job_id FROM employees WHERE last_name = 'Kochhar')
+WHERE employee_id=206;
+
+UPDATE copy_emp
+SET salary =
+    (SELECT salary FROM employees WHERE last_name = 'King'),
+job_id =
+    (SELECT job_id FROM employees WHERE last_name = 'Kochhar'),
+hire_date =
+    (SELECT hire_date FROM employees WHERE last_name = 'Whalen')
+where employee_is =302;
+
+UPDATE copy_emp e
+SET e.department_name =
+    (SELECT d.department_name FROM copy_dept d
+    WHERE e.department_id = d.department_id);
+
+ALTER TABLE copy_emp
+ADD (department_name VARCHAR(30));
+
+
+--manual table
+
+CREATE TABLE my_employees (
+    hire_date DATE DEFAULT SYSDATE,
+    first_name VARCHAR2(15),
+    last_name VARCHAR2(15)
+);
+
+INSERT INTO my_employees
+(first_name, last_name)
+VALUES
+('Angelina', 'Wright');
+
+DELETE FROM copy_emp
+WHERE department_id=80;
+
+DELETE FROM copy_emp_2; --delete isinya
+SELECT * FROM copy_emp_2;
+
+DROP TABLE copy_emp_2; --delete the whole table
+
+DELETE FROM copy_dept
+WHERE department_id =
+    (SELECT department_id FROM departments
+    WHERE department_name LIKE 'Accounting');
+
+MERGE INTO copy_emp c USING employees e
+ON (c.employee_id = e.employee_id)
+WHEN MATCHED THEN UPDATE SET
+c.last_name = e.last_name,
+c.department_id = e.department_id,
+c.salary = e.salary
+WHEN NOT MATCHED THEN INSERT VALUES
+(e.employee_idm e.first_name, e.last_name, e.email, e.phone_number,
+e.hire_date, e.job_id, e.salary, e.commission_pct, e.manager_id, e.department_id, e.bonus);
+
+

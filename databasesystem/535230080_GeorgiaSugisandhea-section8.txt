@@ -1,0 +1,127 @@
+--Georgia Sugisandhea_535230080
+--group
+
+--grouping rows by group by
+SELECT department_id, MAX (salary), MIN(SALARY)
+FROM employees
+GROUP BY department_id
+ORDER BY department_id ASC;
+
+--semua kolom di select harus dituliskan di group by, kecuali group function
+SELECT job_id, last_name, AVG(salary)
+FROM employees
+GROUP BY job_id, last_name;
+
+--GROUP BY & COUNT
+--jumlah department tiap city
+--equijoin
+
+SELECT l.city, COUNT (d.department_id) as "Jumlah Department"
+FROM locations l, departments d
+WHERE l.location_id = d.location_id
+GROUP BY l.city
+ORDER BY l.city;
+
+--GROUP BY & WHERE
+SELECT department_id, MAX(salary)
+FROM employees
+WHERE last_name !='King' AND last_name != 'Abel'
+GROUP BY department_id
+ORDER BY department_id;
+
+SELECT department_id, MAX(salary)
+FROM employees
+WHERE NOT last_name = 'King'
+GROUP BY department_id;
+
+--GROUP BY & ROUND
+SELECT d.department_name AS "Department Name", ROUND(AVG(e.salary))
+"Average Salary"
+FROM employees e, departments d
+WHERE d.department_id = e.department_id
+GROUP BY d.department_name
+ORDER BY d.department_name;
+
+--nesting group functions
+SELECT MIN(AVG(salary)) FROM employees
+GROUP BY department_id;
+
+--stddev dan variance fungsinya mirip
+--keduanya ngukur variabilitas angka dalam
+--kumpulan data menggunakan rata rata kelompok angka tertentu
+--variance mengukur tingkat rata rata dimana setiap poin berbeda dari rata rata
+
+SELECT ROUND(VARIANCE(life_expect_at_birth), 4) --belakang koma ada 4
+FROM wf_countries;
+--stddev mengukur penyebaran sekelompok angka dari mean/rata2
+SELECT ROUND(stddev(life_expect_at_birth), 4)
+FROM wf_countries;
+
+--9
+--HAVING = digunakan untuk membatasi grup, fungsinya mirip WHERE
+SELECT department_id, MAX(salary)
+FROM employees
+WHERE COUNT(*) >1 --error cuz group function
+GROUP BY department_id;
+
+SELECT department_id, MAX(salary)
+FROM employees
+GROUP BY department_id
+HAVING COUNT(*) >1
+ORDER BY department_id;
+--WHERE membatasi baris yang dipilih, kondisinya nama kolom
+--HAVING membatasi baris yang dipilih, kondisinya group functions
+
+
+--ROLLUP = hitung subtotal duli baru grand total
+SELECT department_id, job_id, SUM(salary)
+FROM employees
+WHERE department_id < 50
+GROUP BY ROLLUP (department_id, job_id);
+--Ada 3 nilai yang dibuat otomatis, yaitu subtotal department,
+--sama grand total untuk department id 10 dan 20
+
+--CUBE = hitung grand total baru subtotal
+SELECT department_id, job_id, SUM(salary)
+FROM employees
+WHERE department_id<50
+GROUP BY CUBE(department_id, job_id);
+
+--GROUPING SETS = beberapa GROUP BY yang berbeda dalam 1 query
+SELECT department_id, job_id, manager_id, SUM(salary)
+FROM employees WHERE department_id<50
+GROUP BY GROUPING SETS
+((department_id, job_id), (department_id, manager_id), 
+(job_id, manager_id));
+
+--GROUPING FUNCTIONS = mau tahu baris yang mana yang diahsilkan dari ROLLUP
+--sama baris yang tidak dari ROLLUP/CUBE
+--0 baris yang tidak dihasilkan oleh rollup/cube, kalo 1 dia dihasilkan oleh rollup/cube
+SELECT department_id, job_id, SUM(salary)
+FROM employees
+WHERE department_id<50
+GROUP BY ROLLUP(department_id, job_id);
+
+SELECT department_id, job_id, SUM(salary),
+GROUPING(department_id) AS "Dept subtotal",
+GROUPING(job_id) AS "Job sub total"
+FROM employees
+WHERE department_id<50
+GROUP BY ROLLUP (department_id, job_id);
+
+--SET OPERATORS
+--UNION = mengembalikan baris dari 2 tabel. duplicatenya dibuang
+SELECT hire_date, employee_id, job_id
+FROM employees
+UNION
+SELECT TO_DATE(NULL), employee_id, job_id --buat nyamain ke hire_date, biar pake hire_date
+FROM job_history;
+
+SELECT location_id FROM locations
+UNION
+SELECT location_id FROM departments
+ORDER BY location_id;
+
+
+
+

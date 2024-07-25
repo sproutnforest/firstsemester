@@ -1,0 +1,63 @@
+--Georgia Sugisandhea_535230080_Kelas C - UTS
+
+--1
+SELECT first_name as "Nama Depan", last_name as "Nama Keluarga", email as "Email", job_title as "Jabatan", salary as "Gaji Bulanan", salary*12 as "Gaji Tahunan", salary*12*0.15 as "Pajak Tahunan"
+FROM employees JOIN jobs USING (job_id)
+WHERE salary>15000; 
+
+--2
+SELECT country_name as "Nama Negara", capitol as "Ibu Kota", location as "Lokasi"
+FROM wf_countries
+WHERE population>=150000000 AND population<=250000000
+ORDER BY country_name;
+
+--3
+SELECT COUNT(employee_id) as "Jumlah Karyawan Dari Departemen Dengan Huruf Awal 'S'"
+FROM employees JOIN departments USING (department_id)
+WHERE department_name LIKE 'S%';
+
+--4
+SELECT first_name||' '||last_name||' mulai bekerja pada '||TO_CHAR(hire_date, 'YYYY') as "Tahun Masuk Karyawan"
+FROM employees
+WHERE department_id=:dep_id
+ORDER BY TO_CHAR(hire_date, 'YYYY');
+
+--5
+SELECT first_name ||' '||last_name as "Nama Lengkap", job_title as "Jabatan", phone_number as "Telepon", department_name as "Departemen"
+FROM employees JOIN jobs USING (job_id)
+JOIN departments USING (department_id)
+WHERE phone_number LIKE '515%'
+ORDER BY department_name;
+
+--6
+SELECT country_name as "Nama Resmi", country_translated_name as "Nama Populer", currency_name as "Mata Uang"
+FROM wf_countries NATURAL JOIN wf_currencies
+WHERE location='Central Asia';
+
+--7
+SELECT last_name, department_id, TO_CHAR(salary, '$99,000.00') as "MONTHLY_SALARY", TO_CHAR(salary*12, '$999,000.00') as "ANNUAL_SALARY"
+FROM employees
+WHERE department_id= :dep_id
+ORDER BY "ANNUAL_SALARY" DESC;
+
+--8
+SELECT first_name||' '||last_name||' Masuk kerja pada bulan '||TO_CHAR(hire_date, 'Month YYYY', 'NLS_DATE_LANGUAGE=Indonesian') AS "BULAN_MASUK"
+FROM employees
+WHERE employee_id= :emp_id;
+
+--9a
+SELECT country_name, location
+FROM wf_countries
+WHERE location='Central America';
+
+--9b
+SELECT last_name, department_id, salary
+FROM Employees
+WHERE department_id=90 AND salary>12000;
+
+--9c
+SELECT last_name, department_name
+FROM Employees JOIN Departments USING(department_id)
+WHERE location_id!=1500;
+
+

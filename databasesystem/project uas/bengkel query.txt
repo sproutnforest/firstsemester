@@ -1,0 +1,432 @@
+Georgia Sugisandhea – 535230080
+Lusy Karlina Coa – 535230164
+Eryca Dhamma Shanty – 535230071
+Brenda Abigail Han’s – 535230194
+Brandon Alexander Jayadi - 535230088
+
+--tabel supplier = untuk menyimpan data data perusahaan supplier spareparts, seperti nama, dan lokasi dari supplier tersebut
+--membuat tabel supplier beserta attribute dan constraintnya
+create table supplier(
+    supplier_id number(5) constraint sup_pk primary key,
+    supplier_name varchar2(30) constraint sup_name_nn not null,
+    city varchar2(20),
+    street varchar2(30),
+    postcode number(5)
+);
+
+--memasukkan data ke tabel supplier
+insert into supplier
+values(19001, 'Bustras', 'Jakarta Utara', 'Jl. Deplu', 54301);
+
+insert into supplier
+values(19002, 'Fuyota', 'Bandung', 'Jl. Cepot', 87310);
+
+insert into supplier
+values(19003, 'Rushin', 'Banten', 'Jl. Kwini II', 54325);
+
+insert into supplier
+values(19004, 'KoraKara', 'Jakarta Selatan', 'Jl. Gamelan', 77652);
+
+insert into supplier
+values(19005, 'Marla', 'Cikupa', 'Jl. Fatmawati', 56241);
+
+--menampilkan hasil tabel supplier
+select *
+from supplier;
+
+
+--table sales = untuk menyimpan data lengkap orang orang yang bekerja di bengkel ini sebagai sales, seperti data biodata, kebutuhan kontak, dan gaji. constraint unique composite email dan nama pertama sebagai asumsi bisa ada orang berbeda memiliki email yang sama.
+--membuat tabel sales beserta attribute dan constraintnya
+create table sales(
+    sales_id number(5) constraint sls_pk primary key,
+    fname varchar2(20) constraint fname_nn not null,
+    lname varchar2(20) constraint lname_nn not null,
+    telephone number(10),
+    email varchar2(20),
+    address varchar2(30),
+    date_of_birth date,
+    hire_date date,
+    gender varchar2(1),
+    salary number(10),
+    constraint gen_ch check (gender IN('F', 'M')),
+    constraint sl_email_uq unique (email, fname)
+    );
+
+--memasukkan data ke tabel sales
+insert into sales
+values(28011, 'Michael', 'Brown', '99978912', 'MichaelB@email.com', 'Jl. Cipete B/22', TO_DATE('28-JAN-1991', 'DD-MON-YYYY'), TO_DATE('12-DEC-2013', 'DD-MON-YYYY'), 'M', 20000);
+
+insert into sales
+values(28012, 'Bea', 'Butcher', '44902761', 'BeaB@email.com', 'Jl. Manhattan L/41', TO_DATE('19-MAY-1996', 'DD-MON-YYYY'), TO_DATE('20-JUN-2016', 'DD-MON-YYYY'), 'F', 16000);
+
+insert into sales
+values(28013, 'Stacey', 'White', '53805691', 'StaceyW@email.com', 'Jl. Mandolin C/12', TO_DATE('21-SEP-1995', 'DD-MON-YYYY'), TO_DATE('14-FEB-2018', 'DD-MON-YYYY'), 'F', 21000);
+
+insert into sales
+values(28014, 'Jim', 'Adore', '64276145', 'JimA@email.com', 'Jl. Sekolah P/9', TO_DATE('14-FEB-1990', 'DD-MON-YYYY'), TO_DATE('29-APR-2017', 'DD-MON-YYYY'), 'M', 25000);
+
+insert into sales
+values(28015, 'Irene', 'MCallister', '90354761', 'IreneM@email.com', 'Jl. Jembatan Tiga M/31', TO_DATE('28-JUL-1994', 'DD-MON-YYYY'), TO_DATE('12-OCT-2018', 'DD-MON-YYYY'), 'M', 19000);
+
+--menampilkan hasil tabel sales
+select *
+from sales;
+
+--table sparepart = untuk menyimpan data sparepart yang tersedia (dan pernah tersedia, karena sebagai catatan history transaksi di tabel transaction), beserta dengan sales yang bertanggung jawab dalam menjual produk tersebut.
+--membuat tabel sparepart beserta attribute dan constraintnya
+create table sparepart(
+    product_id number(7) constraint sp_pk primary key,
+    product_name varchar2(50) constraint sp_nn not null,
+    type varchar2(25),
+    brand varchar2(25),
+    sales_id number(5),
+    constraint sl_sp_fk foreign key(sales_id) references sales(sales_id) on delete set null
+);
+
+--memasukkan data ke tabel sparepart
+insert into sparepart
+values(17121, 'Light-Buzz Accu 15V-75 AF', 'Accu', 'Guloia', '28011');
+
+insert into sparepart
+values(17122, 'Moose Accu GH 20V MT', 'Accu', 'Mortys', '28011');
+
+insert into sparepart
+values(17125, 'Accu Ruby-Floss BT 15V-90 HB', 'Accu', 'Logher', '28011');
+
+insert into sparepart
+values(17123, 'Accu Snowbell MS 30V', 'Accu', 'Privy', '28012');
+
+insert into sparepart
+values(17124, 'Panther Window Wiper 3PT', 'Window Wiper', 'Privy', '28012');
+
+insert into sparepart
+values(17131, 'Bulker 5PT Window Wiper', 'Window Wiper', 'DFixerUp', '28012');
+
+insert into sparepart
+values(17126, 'Air Filter Shafter 500ML', 'Air Filter', 'Privy', '28013');
+
+insert into sparepart
+values(17129, 'Pink Zebra Air Filter 500ML', 'Air Filter', 'Guloia', '28013');
+
+insert into sparepart
+values(17133, 'Fasmer Air Filter 300ML', 'Air Filter', 'Logher', '28013');
+
+insert into sparepart
+values(17127, 'Abetyl Exhaust 20-MT', 'Exhaust', 'Mortys', '28014');
+
+insert into sparepart
+values(17130, 'Sakura Sugar Muffler 33 PH', 'Exhaust', 'Guloia', '28014');
+
+insert into sparepart
+values(17132, 'Veloc Rush Tire 300/521X17', 'Tire', 'DFixerUp', '28014');
+
+insert into sparepart
+values(17137, 'Pilot Racer Gun Tire 500/623BT01', 'Tire', 'Logher', '28015');
+
+insert into sparepart
+values(17136, 'Champ Horse 900/356K912 Tire', 'Tire', 'Mortys', '28015');
+
+--menampilkan hasil tabel sparepart
+select *
+from sparepart;
+
+
+--tabel customer= menyimpan data customer yang pernah bertransaksi/melakukan servis di bengkel ini, seperti nama beserta gender, dan kebutuhan kontak serta alamat, constraint unique composite email dan nama pertama sebagai asumsi bisa ada orang berbeda memiliki email yang sama.
+--membuat tabel customer beserta attribute dan constraintnya
+create table customer(
+    customer_id number(7) constraint cus_pk primary key,
+    fname varchar2(20),
+    lname varchar2(20),
+    telephone number(10),
+    email varchar2(20),
+    address varchar2(30),
+    gender varchar2(1),
+    constraint cus_gen_ch check (gender IN('F', 'M')),
+    constraint cus_email_uq unique (email,fname)
+);
+
+--memasukkan data ke tabel customer
+insert into customer
+values(16141, 'Rose', 'Cooper', '08492301', 'RoseC@email.com', 'Jl. HII B\23', 'F');
+
+insert into customer
+values(16142, 'Jay', 'Lee', '90354712', 'JayL@email.com', 'Jl. Sabang M\33', 'M');
+
+insert into customer
+values(16143, 'Abao', 'Azura', '74920431', 'AbaoA@email.com', 'Jl. S. Parman V\21', 'M');
+
+insert into customer
+values(16144, 'Vanessa', 'Witherspoon', '67209341', 'VanessaW@email.com', 'Jl. Gading Boulevard D\42', 'F');
+
+insert into customer
+values(16145, 'John', 'Carpenter', '75309182', 'JohnC@email.com', 'Jl. Sudirman L\22', 'M');
+
+--menampilkan hasil tabel customer
+select *
+from customer;
+
+--table vehicles = untuk menyimpan data lengkap kendaraan yang pernah melakukan servis di bengkel ini, beserta dengan id pemiliknya 
+--membuat tabel vehicles beserta attribute dan constraintnya
+create table vehicles(
+    plate_number varchar2(10) constraint vh_pl_pk primary key,
+    vehicle_name varchar2(30) constraint vh_nm_nn not null,
+    type varchar2(10) constraint vh_ty_nn not null,
+    customer_id number(7),
+    constraint vh_id_fk foreign key(customer_id) references customer(customer_id) on delete cascade
+)
+
+--memasukkan data ke tabel vehicles
+insert into vehicles
+values('B 5126 JKI', 'Fuyota Camry', 'Car', '16144');
+
+insert into vehicles
+values('D 2512 JSS', 'Chegrolet Equinox', 'Car', '16141');
+
+insert into vehicles
+values('B 8824 LOP', 'Leep Grand Cherokee', 'Car', '16142');
+
+insert into vehicles
+values('B 3435 MRI', 'Fuyota Corolla', 'Car', '16143');
+
+insert into vehicles
+values('D 0923 GWB', 'Toyal Enfield Interceptor 650', 'Motorcycle', '16141');
+
+insert into vehicles
+values('B 7865 NNP', 'SMW R 1250 GS', 'Motorcycle', '16145');
+
+insert into vehicles
+values('B 2501 ZFY', 'Miata Marda MX-5', 'Car', '16145');
+
+--menampilkan hasil tabel vehicles
+select *
+from vehicles;
+
+--table staff = untuk menyimpan data orang orang yang bekerja di bengkel ini sebagai staff montir, seperti data biodata, kebutuhan kontak, dan gaji. constraint unique composite email dan nama pertama sebagai asumsi bisa ada orang berbeda memiliki email yang sama.
+--membuat tabel staff beserta attribute dan constraintnya
+create table staff(
+    staff_id number(5) constraint stf_pk primary key,
+    fname varchar2(20) constraint stf_fname_nn not null,
+    lname varchar2(20) constraint stf_lname_nn not null,
+    specialization varchar2(10),
+    telephone number(10),
+    email varchar2(20),
+    address varchar2(30),
+    date_of_birth date,
+    hire_date date,
+    gender varchar2(1),
+    salary number(10),
+    constraint stf_gen_ch check (gender IN('F', 'M')),
+    constraint stf_email_uq unique (email, fname)
+);
+
+--memasukkan data ke tabel staff
+insert into staff
+values(25121, 'Mary', 'Ivory', 'Motorcycle', '63401923', 'MaryI@email.com', 'Jl. Raden Saleh L\21', TO_DATE('21-NOV-1995', 'DD-MON-YYYY'), TO_DATE('14-APR-2015', 'DD-MON-YYYY'), 'F', '20000');
+
+insert into staff
+values(25122, 'Alvin', 'William', 'Motorcycle', '63801295', 'AlvinW@email.com', 'Jl. Fatmawati O\24', TO_DATE('06-OCT-1993', 'DD-MON-YYYY'), TO_DATE('19-JAN-2017', 'DD-MON-YYYY'), 'M', '17000');
+
+insert into staff
+values(25123, 'Gary', 'Ivory', 'Car', '74927942', 'GaryI@email.com', 'Jl. Mandolin P\33', TO_DATE('01-APR-1991', 'DD-MON-YYYY'), TO_DATE('07-AUG-2019', 'DD-MON-YYYY'), 'M', 23000);
+
+insert into staff
+values(25124, 'Belle', 'Skovsky', 'Car', '89340173', 'BelleS@email.com', 'Jl. Rambutan R\11', TO_DATE('01-JAN-2000', 'DD-MON-YYYY'), TO_DATE('05-DEC-2022', 'DD-MON-YYYY'), 'F', 11000);
+
+--menampilkan hasil tabel staff
+select *
+from staff;
+
+--table inventory; new entity hasil many to many relationship antara supplier dan sparepart. Menyimpan data masing masing sparepart beserta dengan supplier yang menyediakan produk tersebut, dan harga yang dijual oleh suppliernya. Asumsi bahwa jenis sparepart yang sama bisa dijual oleh supplier yang berbeda.
+--membuat tabel inventory beserta attribute dan constraintnya
+create table inventory(
+    serial_number number(10) constraint inv_pk primary key,
+    product_id number(7),
+    supplier_id number(5),
+    stock number(4),
+    price number(10),
+    date_in date,
+    constraint inv_sup_fk foreign key(supplier_id) references supplier(supplier_id) on delete cascade,
+    constraint inv_pr_fk foreign key(product_id) references sparepart(product_id)
+);
+
+--memasukkan data ke tabel inventory
+insert into inventory
+values(06100001, 17121, 19001, 10, 500000, TO_DATE('15-OCT-2018', 'DD-MON-YYYY'));
+
+insert into inventory
+values(06100002, 17121, 19003, 3, 350000, TO_DATE('20-NOV-2018', 'DD-MON-YYYY'));
+
+insert into inventory
+values(06100003, 17122, 19002, 6, 450000, TO_DATE('21-NOV-2018', 'DD-MON-YYYY'));
+
+insert into inventory
+values(06100004, 17122, 19005, 9, 235000, TO_DATE('25-DEC-2018', 'DD-MON-YYYY'));
+
+insert into inventory
+values(06100005, 17123, 19004, 3, 1250000, TO_DATE('28-DEC-2018', 'DD-MON-YYYY'));
+
+insert into inventory
+values(06100006, 17124, 19002, 10, 110000, TO_DATE('12-JAN-2019', 'DD-MON-YYYY'));
+
+insert into inventory
+values(06100007, 17125, 19001, 16, 178000, TO_DATE('18-JAN-2019', 'DD-MON-YYYY'));
+
+insert into inventory
+values(06100008, 17126, 19003, 53, 96000, TO_DATE('25-JAN-2019', 'DD-MON-YYYY'));
+
+insert into inventory
+values(06100009, 17127, 19001, 20, 300000, TO_DATE('27-JAN-2019', 'DD-MON-YYYY'));
+
+insert into inventory
+values(06100010, 17127, 19004, 10, 320000, TO_DATE('31-JAN-2019', 'DD-MON-YYYY'));
+
+insert into inventory
+values(06100011, 17127, 19002, 14, 410000, TO_DATE('05-FEB-2019', 'DD-MON-YYYY'));
+
+insert into inventory
+values(06100012, 17129, 19005, 5, 200000, TO_DATE('07-FEB-2019', 'DD-MON-YYYY'));
+
+insert into inventory
+values(06100013, 17130, 19002, 16, 520000, TO_DATE('10-FEB-2019', 'DD-MON-YYYY'));
+
+insert into inventory
+values(06100014, 17131, 19004, 7, 910000, TO_DATE('11-FEB-2019', 'DD-MON-YYYY'));
+
+insert into inventory
+values(06100015, 17131, 19001, 40, 425000, TO_DATE('15-FEB-2019', 'DD-MON-YYYY'));
+
+insert into inventory
+values(06100016, 17132, 19003, 16, 650000, TO_DATE('18-FEB-2019', 'DD-MON-YYYY'));
+
+insert into inventory
+values(06100017, 17133, 19002, 24, 775000, TO_DATE('23-FEB-2019', 'DD-MON-YYYY'));
+
+insert into inventory
+values(06100018, 17136, 19004, 8, 800000, TO_DATE('26-FEB-2019', 'DD-MON-YYYY'));
+
+insert into inventory
+values(06100019, 17137, 19005, 16, 560000, TO_DATE('28-FEB-2019', 'DD-MON-YYYY'));
+
+insert into inventory
+values(06100020, 17137, 19003, 32, 720000, TO_DATE('09-MAR-2019', 'DD-MON-YYYY'));
+
+--menampilkan hasil tabel inventory
+select *
+from inventory;
+
+--table transaction; new entity hasil many to many relationship antara sales dan customer. Untuk menyimpan history data transaksi sparepart oleh customer yang dijual oleh sales, untuk kemudahan dalam membuat laporan dan kebutuhan garansi.
+--membuat tabel transaction beserta attribute dan constraintnya
+create table transaction(
+    purchase_id number(10) constraint trns_pk primary key,
+    product_id number(7),
+    customer_id number(7),
+    sales_id number(5),
+    purchase_date date,
+    constraint trns_pr_fk foreign key(product_id) references sparepart(product_id),
+    constraint trns_cus_fk foreign key(customer_id) references customer(customer_id),
+    constraint trns_sl_fk foreign key(sales_id) references sales(sales_id)
+);
+
+--memasukkan data ke tabel transaction
+insert into transaction
+values(3912001, 17132, 16141, 28011, TO_DATE('20-JUN-2022', 'DD-MON-YYYY'));
+
+insert into transaction
+values(3912002, 17125, 16141, 28013, TO_DATE('25-AUG-2022', 'DD-MON-YYYY'));
+
+insert into transaction
+values(3912003, 17127, 16142, 28014, TO_DATE('19-MAR-2021', 'DD-MON-YYYY'));
+
+insert into transaction
+values(3912004, 17121, 16144, 28012, TO_DATE('30-APR-2021', 'DD-MON-YYYY'));
+
+insert into transaction
+values(3912005, 17136, 16145, 28013, TO_DATE('27-MAY-2022', 'DD-MON-YYYY'));
+
+--menampilkan hasil tabel transaction
+select * 
+from transaction;
+
+--table service; new entity hasil many to many relationship antara staff dan vehicle. Untuk menyimpan data history service kendaraan oleh staff montir, untuk kebutuhan laporan staff dan rekam servis masing masing kendaraan
+--membuat tabel service beserta attribute dan constraintnya
+create table service(
+    service_id number(7) constraint ser_pk primary key,
+    plate_number varchar(10),
+    staff_id number(5),
+    date_in date constraint ser_dtin_nn not null,
+    date_out date,
+    notes varchar2(75),
+    price number(9),
+    constraint ser_vh_fk foreign key(plate_number) references vehicles(plate_number),
+    constraint ser_st_fk foreign key(staff_id) references staff(staff_id)
+);
+
+--membuat sequence untuk membuat angka berurutan di atribut service id dalam tabel service
+create sequence srv_seq
+    start with 120301
+    increment by 1;
+
+--memasukkan data ke tabel service
+insert into service
+values(srv_seq.nextval, 'B 2501 ZFY', 25123, TO_DATE('11-SEP-2022', 'DD-MON-YYYY'), TO_DATE('15-SEP-2022', 'DD-MON-YYYY'), 'oil light been on for ages', 250000);
+
+insert into service
+values(srv_seq.nextval, 'B 7865 NNP', 25121, TO_DATE('13-SEP-2022', 'DD-MON-YYYY'), TO_DATE('14-SEP-2022', 'DD-MON-YYYY'), 'sign lamp doesnt work', 200000);
+
+insert into service
+values(srv_seq.nextval, 'D 0923 GWB', 25122, TO_DATE('14-SEP-2022', 'DD-MON-YYYY'), TO_DATE('20-SEP-2022', 'DD-MON-YYYY'), 'monthly check', 150000);
+
+insert into service
+values(srv_seq.nextval, 'B 3435 MRI', 25124, TO_DATE('21-SEP-2022', 'DD-MON-YYYY'), TO_DATE('28-SEP-2022', 'DD-MON-YYYY'), 'window wiper doesnt work', 400000);
+
+insert into service
+values(srv_seq.nextval, 'D 0923 GWB', 25121, TO_DATE('19-DEC-2022', 'DD-MON-YYYY'), TO_DATE('21-DEC-2022', 'DD-MON-YYYY'), 'replace cushion seat', 200000);
+
+insert into service
+values(srv_seq.nextval, 'B 8824 LOP', 25123, TO_DATE('25-SEP-2022', 'DD-MON-YYYY'), TO_DATE('27-SEP-2022', 'DD-MON-YYYY'), 'spooring', 300000);
+
+insert into service
+values(srv_seq.nextval, 'D 2512 JSS', 25124, TO_DATE('01-OCT-2022', 'DD-MON-YYYY'), TO_DATE('05-OCT-2022', 'DD-MON-YYYY'), 'back seat doesnt fold', 510000);
+
+insert into service
+values(srv_seq.nextval, 'B 5126 JKI', 25124, TO_DATE('07-OCT-2022', 'DD-MON-YYYY'), TO_DATE('09-OCT-2022', 'DD-MON-YYYY'), 'hazard lamp doesnt work', 312000);
+
+insert into service
+values(srv_seq.nextval, 'B 8824 LOP', 25124, TO_DATE('09-DEC-2022', 'DD-MON-YYYY'), TO_DATE('11-DEC-2022', 'DD-MON-YYYY'), 'steering wheel is too noisy when turning', 230000);
+
+--menampilkan hasil tabel service dengan tambahan order by
+select *
+from service
+order by service_id;
+
+
+--katalog service yang dilakukan oleh per staff, dimana staffnya diinput oleh user saat dijalankan. Menggunakan join, subquery, dan bind variable. Berikut querynya
+select s.service_id, c.customer_id, c.fname||' '||c.lname as customer_name, v.plate_number, v.vehicle_name, v.type, s.staff_id, s.date_in, s.date_out
+from customer c join vehicles v on(c.customer_id = v.customer_id) join service s on(v.plate_number = s.plate_number)
+where s.staff_id=(
+    select staff_id
+    from staff
+    where upper(fname)= upper(:staff_first_name)
+);
+
+--sebuah view berisi laporan minimum harga, maksimum harga, rata-rata harga, dan jumlah barang yang dibeli dari supplier tersebut. Menggunakan join, function, dan view.
+--membuat view supplier_report
+create view supplier_report as select supplier_name, count(product_id) as total_product, to_char(max(price), '9,999,999.99') as max_price, to_char(min(price), '9,999,999.99') as min_price, to_char(round(avg(price)), '9,999,999.99') as avg_price
+from inventory natural join supplier
+group by supplier_name;
+
+--menampilkan view supplier_report
+select * from supplier_report;
+
+--sebuah view sales_commission untuk melihat total penjualan sales dan menghitung komisi sesuai penjualan sales tersebut. Menggunakan conditional expressions, join, function, dan view.
+--membuat view sales_commission
+create view sales_commission as select s.sales_id, nvl(count(purchase_id), 0) as total_sale, to_char((nvl(count(purchase_id), 0)*10000), '999,999.99') as commission
+from sales s left outer join transaction t on(s.sales_id = t.sales_id)
+group by s.sales_id
+order by s.sales_id;
+
+--menampilkan view sales_commission
+select * from sales_commission;
+
+--sequence tidak dapat dipakai khusus dalam view, maka sequence kami gunakan di dalam create table.
+
